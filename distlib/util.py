@@ -3,7 +3,7 @@
 # See LICENSE.txt and CONTRIBUTORS.txt.
 #
 import codecs
-from collections import deque
+from collections import deque, OrderedDict
 import contextlib
 import csv
 from glob import iglob as std_iglob
@@ -51,6 +51,16 @@ OR = re.compile(r'^or\b\s*')
 AND = re.compile(r'^and\b\s*')
 NON_SPACE = re.compile(r'(\S+)\s*')
 STRING_CHUNK = re.compile(r'([\s\w\.{}()*+#:;,/?!~`@$%^&=|<>\[\]-]+)')
+
+
+def dedup_preserving_order(*args):
+    dedup = OrderedDict()
+    for col in args:
+        if col:
+            for el in col:
+                dedup[el] = True
+
+    return args[0].__class__(dedup.keys())
 
 
 def parse_marker(marker_string):

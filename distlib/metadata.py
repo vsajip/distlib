@@ -19,7 +19,7 @@ import re
 from . import DistlibException, __version__
 from .compat import StringIO, string_types, text_type
 from .markers import interpret
-from .util import extract_by_key, get_extras
+from .util import dedup_preserving_order, extract_by_key, get_extras
 from .version import get_scheme, PEP440_VERSION_RE
 
 logger = logging.getLogger(__name__)
@@ -98,6 +98,8 @@ _426_MARKERS = ('Private-Version', 'Provides-Extra', 'Obsoleted-By',
 _566_FIELDS = _426_FIELDS + ('Description-Content-Type',
                              'Requires', 'Provides', 'Obsoletes')
 
+_13_21_FIELDS = dedup_preserving_order(_345_FIELDS, _566_FIELDS)
+
 _566_MARKERS = ('Description-Content-Type',)
 
 _ALL_FIELDS = set()
@@ -118,7 +120,7 @@ def _version2fieldlist(version):
     elif version == '1.2':
         return _345_FIELDS
     elif version in ('1.3', '2.1'):
-        return _345_FIELDS + _566_FIELDS
+        return _13_21_FIELDS
     elif version == '2.0':
         return _426_FIELDS
     raise MetadataUnrecognizedVersionError(version)
