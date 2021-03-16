@@ -11,18 +11,21 @@ import sys
 from compat import unittest
 
 # Always find our sources first
-sys.path.insert(0, '..')
+sys.path.insert(0, os.path.basename(os.path.abspath('.')))
 import distlib_tests
 sys.path.pop(0)
 
-def main():
+def load_tests():
     verbosity = 1
     if '-v' in sys.argv:
         verbosity = 2
     loader = unittest.TestLoader()
+    return loader.loadTestsFromModule(distlib_tests)
+
+def main():
     failfast = 'FAILFAST' in os.environ
     runner = unittest.TextTestRunner(verbosity=verbosity, failfast=failfast)
-    results = runner.run(loader.loadTestsFromModule(distlib_tests))
+    results = runner.run()
     return not results.wasSuccessful()
 
 if __name__ == '__main__':
